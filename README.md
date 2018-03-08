@@ -1,37 +1,33 @@
-## Welcome to GitHub Pages
+# 描述
+canvas学习，实现动态文本绘制和简单游戏开发。
+> 画板
 
-You can use the [editor on GitHub](https://github.com/erpang123/canvas/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+实现在画布上绘制文本图形后保存为图片
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+> 绘制文本
 
-### Markdown
+实现动态文本（点文本和线文本），参考文章： http://www.zhangxinxu.com/wordpress/2017/12/canvas-getimagedata-letter-shape-animation/
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+> 找不同
 
-```markdown
-Syntax highlighted code block
+canvas实现的一个简单游戏（图片来源网上）
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+# 演示
+### 画板
+[查看演示效果](https://erpang123.github.io/canvas/画板/index.html)（请用pc模式预览）
+### 绘制文本
+[查看演示效果](https://erpang123.github.io/canvas/绘制文本/index.html)（请用pc模式预览）
+### 找不同
+[查看演示效果](https://erpang123.github.io/canvas/找不同/index.html)（请用chrome的手机模式预览）
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/erpang123/canvas/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## 效果：
+### 画板
+ ![](Screenshots/1.png)
+### 绘制文本
+![](Screenshots/2.gif)
+![](Screenshots/3.gif)
+### 找不同
+![](Screenshots/4.png)
+![](Screenshots/5.png)
+![](Screenshots/6.png)
