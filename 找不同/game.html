@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+	<link rel="stylesheet" type="text/css" href="css/game.css"/>
+</head>
+<body>
+	<canvas id='canvas'></canvas>
+	<script type="text/javascript">
+		var canvas = document.getElementById('canvas');
+		canvas.width = window.screen.width;
+		canvas.height = window.screen.height;
+		var ctx = canvas.getContext('2d');
+		ctx.save();
+		//定时器
+    	var canvasTime = 0;
+    	var levelTime = 0;
+	</script>
+	<script type="text/javascript" src="js/imgDom.js"></script>		<!--实例img对象-->
+	<script type="text/javascript" src="js/imgIcon.js"></script>	<!--图片元素对象-->
+	<script type="text/javascript" src="js/rules.js"></script>		<!--规则对象-->
+	<script type="text/javascript" src="js/success.js"></script>	<!--游戏成功-->
+	<script type="text/javascript" src="js/codeTime.js"></script>	<!--游戏倒计时-->
+	<script type="text/javascript" src="js/cricle.js"></script>		<!--游戏选中样式-->
+	<script type="text/javascript" src="js/level.js"></script>		<!--游戏第一关-->
+	<script type="text/javascript" src="js/cool.js"></script>		<!--canvas元素坐标对象-->
+	<script type="text/javascript" src="js/award.js"></script>		<!--抽奖页面-->
+	<script type="text/javascript" src='js/screen.js'></script>		<!--舞台场景-->
+	<script type="text/javascript" src="js/event.js"></script>		<!--触发事件-->
+	<script type="text/javascript" src="js/game.js"></script>		<!--游戏实例对象-->
+<!--	<script type="text/javascript">
+		var canvas = document.getElementById('canvas');
+
+		canvas.addEventListener('touchstart', function (event) {
+			var e = {
+				origin : {
+					x: event.touches[0].clientX,
+					y: event.touches[0].clientY
+				}
+			}
+			startGame(e);
+		});
+
+		var musicBool = false;	//背景音乐的开关
+		var btnBool = true;		//开始游戏是否可以点击
+		var startBool = false;	//开始挑战关闭
+		var level1Bool = false;	//第一关是否开始
+		var againBool = false;	//再次游戏是否开启
+		var nextBool = false;	//下一关是否开始
+
+		function startGame (e) {
+			//开始游戏按钮坐标
+			var btn = {
+				w: 112,
+				h: 40,
+				x: canvas.width/2-56,
+				y: canvas.height - 130
+			};
+			//开始挑战按钮坐标
+			var playBtnCool = {
+				w: 112,
+				h: 40,
+				x: canvas.width/2-56,
+				y: canvas.height/2 + 120
+			};
+			//背景音乐按钮坐标
+			var musicBtn = {
+				w: 30,
+				h: 30,
+				x: 320,
+				y: 15
+			};
+			//再次挑战按钮坐标
+			var againBtn = {
+				w: 112,
+				h: 40,
+				x: canvas.width/2-56,
+				y: canvas.height/2 + 120
+			};
+			//下一关按钮坐标
+			var nextBtn =  {
+				w: 112,
+				h: 40,
+				x: canvas.width/2-56,
+				y: canvas.height/2 + 120
+			}
+			//抽奖按钮坐标
+			var awardBtn = {
+				w: 112,
+				h: 40,
+				x: canvas.width/2-56,
+				y: canvas.height - 80
+			}
+			//抽奖箭头
+			var arrowIcon = {
+				w: 30,
+				h: 40,
+				x: canvas.width/2 - 15,
+				y: canvas.height/2 - 22
+			}
+
+			//第一关不同点的坐标
+			var level1 = {
+				w: 60,
+				h: 60,
+				x1: 130,
+				y1: 340,
+				y1_1: 510
+			};
+
+			//抽奖按钮点击
+			if (e.origin.x > awardBtn.x && e.origin.x < awardBtn.x + awardBtn.w && e.origin.y > awardBtn.y && e.origin.y < awardBtn.y + awardBtn.h){
+				award();
+			}
+			//点击抽奖箭头旋转
+			if (e.origin.x > arrowIcon.x && e.origin.x < arrowIcon.x + arrowIcon.w && e.origin.y > arrowIcon.y && e.origin.y < arrowIcon.y + arrowIcon.h){
+				maxArc = maxArc + parseInt(Math.random()*100+100);
+				ArcFirst = false;
+				animateArrow();
+			}
+
+
+			//绘制游戏规则
+			if (e.origin.x > btn.x && e.origin.x < btn.x + btn.w && e.origin.y > btn.y && e.origin.y < btn.y + btn.h && btnBool) {
+				ctx.restore();
+				ctx.save();
+				ctx.drawImage(rules, canvas.width/2 - 150, canvas.height/2 - 185, 300, 370);
+				ctx.drawImage(playBtn, canvas.width/2-56, canvas.height/2 + 120, 112, 40);
+				btnBool = false;
+			};
+			//开关背景音乐
+			if (e.origin.x > musicBtn.x && e.origin.x < musicBtn.x + musicBtn.w && e.origin.y > musicBtn.y && e.origin.y < musicBtn.y + musicBtn.h) {
+				if (musicBool) {
+					musicBool = false;
+					alert('关闭音乐');
+				} else {
+					musicBool = true;
+					alert('开启音乐');
+				}
+			};
+			//第一关不同点startBool
+			if (!level1Bool && startBool && e.origin.x > level1.x1 && e.origin.x < level1.x1 + level1.w && ((e.origin.y > level1.y1 && e.origin.y < level1.y1 + level1.h) || (e.origin.y > level1.y1_1 && e.origin.y < level1.y1_1 + level1.h))) {
+				level1Bool = true;
+				clearTimeout(levelTime);
+				ctx.restore();
+				ctx.save();
+				ctx.beginPath();
+				ctx.arc(level1.x1 + level1.w/2, level1.y1 + 20, level1.w/2, 0, 2*Math.PI);
+				ctx.strokeStyle = '#f00';
+				ctx.stroke();
+				ctx.beginPath();
+				ctx.arc(level1.x1 + level1.w/2, level1.y1_1 + 20, level1.w/2, 0, 2*Math.PI);
+				ctx.strokeStyle = '#f00';
+				ctx.stroke();
+				setTimeout(function() {
+					passCanvas();
+				},1000);
+			};
+			//再次挑战游戏
+			if (e.origin.x > againBtn.x && e.origin.x < againBtn.x + againBtn.w && e.origin.y > againBtn.y && e.origin.y < againBtn.y + againBtn.h && againBool && level1Bool) {
+				adminTime = '00:10';
+				codeTime();
+				level1Bool = false;
+				againBool = false;
+			};
+			//下一关
+			if (e.origin.x > nextBtn.x && e.origin.x < nextBtn.x + nextBtn.w && e.origin.y > nextBtn.y && e.origin.y < nextBtn.y + nextBtn.h && level1Bool && !nextBool) {
+				nextBool = true;
+			}
+			//开始挑战游戏
+			if (e.origin.x > playBtnCool.x && e.origin.x < playBtnCool.x + playBtnCool.w && e.origin.y > playBtnCool.y && e.origin.y < playBtnCool.y + playBtnCool.h && !startBool) {
+				clearTimeout(canvasTime);
+				codeTime();
+				startBool = true;
+			};
+		}
+
+		//绘制抽奖界面
+		function award () {
+			ctx.restore();
+			ctx.save();
+			clearTimeout(canvasTime);
+			animateArrow();
+		}
+
+		var arrarc = 0;
+		var maxArc = 0;
+		var animateArc = 0;
+		var speed = 0;			//旋转的速度
+		var speedIndex = 0;
+		var ArcFirst = true;
+		function animateArrow () {
+			ctx.restore();
+			ctx.save();
+			arrarc += parseInt(speed); 							//旋转的角度
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+			ctx.translate(canvas.width/2, canvas.height/2);
+			ctx.rotate(arrarc*Math.PI/180);
+			ctx.drawImage(tableImg, -150, -150, 300, 300);
+			ctx.restore();
+			ctx.save();
+			ctx.drawImage(arrowImg, canvas.width/2 - 15, canvas.height/2 - 20, 30, 40);
+			if (ArcFirst) {	//第一次进入的时候不执行下面的部分
+				return;
+			}
+			speed = (maxArc - speedIndex)/10;					//线性方程改变速度
+			speedIndex++;										//线性方程的x轴，斜率是-1
+			if (speed <= 0) {
+				stopAnimate();
+				return;
+			}
+			setTimeout(function () {
+				animateArrow()
+			}, 20);
+		}
+		function stopAnimate () {
+			var minArc = arrarc%360;
+			if (minArc >= 0 && minArc < 45) {
+				ctx.drawImage(awardImg5, canvas.width/2 - 150, canvas.height/2 - 195, 300, 390);
+			} else if (minArc >= 45 && minArc < 90 || (minArc >= 180 && minArc < 225) || (minArc >= 270 && minArc < 315)) {
+				ctx.drawImage(awardImg0, canvas.width/2 - 150, canvas.height/2 - 195, 300, 390);
+			} else if (minArc >= 90 && minArc < 135) {
+				ctx.drawImage(awardImg4, canvas.width/2 - 150, canvas.height/2 - 195, 300, 390);
+			} else if (minArc >= 135 && minArc < 180) {
+				ctx.drawImage(awardImg3, canvas.width/2 - 150, canvas.height/2 - 195, 300, 390);
+			} else if (minArc >= 225 && minArc < 270) {
+				ctx.drawImage(awardImg2, canvas.width/2 - 150, canvas.height/2 - 195, 300, 390);
+			} else if (minArc >= 315 && minArc < 360) {
+				ctx.drawImage(awardImg1, canvas.width/2 - 150, canvas.height/2 - 195, 300, 390);
+			}
+		}
+
+
+		//成功的画布
+		function passCanvas () {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+			ctx.drawImage(passImg, canvas.width/2 - 150, canvas.height/2 - 195, 300, 390);
+			ctx.drawImage(nextBtnImg, canvas.width/2-56, canvas.height/2 + 130, 112, 35);
+		}
+
+		function drawLevel1 () {
+			ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+			ctx.drawImage(levelPic1, 0, 0, canvas.width, canvas.height);
+		};
+
+		function codeTime () {
+			ctx.restore();
+			ctx.save();
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.font = '48px serif';
+			drawLevel1();
+			ctx.fillText(adminTime, 220, 80);
+			var h = parseInt(adminTime.split(':')[0]);
+			var m = parseInt(adminTime.split(':')[1]);
+			if (h > 0) {
+				if (m == 0) {
+					h--;
+					if (h < 10) {
+						h = "0" + h;
+					}
+					m = 60;
+				} else {
+					m--;
+					if (h < 10) {
+						h = "0" + h;
+					}
+					if (m <10 ) {
+						m = "0" + m;
+					}
+				}
+			} else {
+				if (m == 0) {
+					ctx.restore();
+					ctx.save();
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+					ctx.drawImage(failImg, canvas.width/2 - 150, canvas.height/2 - 195, 300, 390);
+					ctx.drawImage(againBtnImg, canvas.width/2-56, canvas.height/2 + 120, 112, 35);
+					againBool = true;
+					level1Bool = true;
+					return;
+				} else {
+					m--;
+					if (h < 10) {
+						h = "0" + h;
+					}
+					if (m <10 ) {
+						m = "0" + m;
+					}
+				}
+			};
+			adminTime = h + ':' + m;
+			levelTime = setTimeout (function () {
+				codeTime();
+			}, 1000);
+		};
+
+		canvas.width = window.screen.width;
+		canvas.height = window.screen.height;
+		var ctx = canvas.getContext('2d');
+		ctx.save();
+
+		//倒计时
+		var adminTime = '00:02';
+
+		//背景图片
+		var bgImg = new Image();
+		bgImg.src='image/bg.jpg';
+		//标题图片
+		var titleImg = new Image();
+		titleImg.src = 'image/title.png';
+		//music图片
+		var musicIcon = new Image();
+		musicIcon.src = 'image/sound.png';
+		musicIcon.onload = function () {
+			rotate(60);
+		};
+
+		//logo图片
+		var domImg1 = new Image();
+		domImg1.src = 'image/startIcon.png';
+		//开始游戏按钮
+		var startBtn = new Image();
+		startBtn.src = 'image/startBtn.png';
+		//游戏说明
+		var rules = new Image();
+		rules.src = 'image/rules.png';
+		//开始跳转
+		var  playBtn = new Image();
+		playBtn.src = 'image/playBtn.png';
+		//第一关
+		var levelPic1 = new Image();
+		levelPic1.src = 'image/levelPic1.png';
+		//游戏失败
+		var failImg = new Image();
+		failImg.src = 'image/fail.png';
+		//游戏成功
+		var passImg = new Image();
+		passImg.src = 'image/pass.png';
+		//再次挑战
+		var againBtnImg = new Image();
+		againBtnImg.src = 'image/againBtn.png';
+		//下一关
+		var nextBtnImg = new Image();
+		nextBtnImg.src = 'image/nextBtn.png';
+		//开始抽奖
+		var awardBtnImg = new Image();
+		awardBtnImg.src = 'image/awardBtn.png';
+		//抽奖面板
+		var tableImg = new Image();
+		tableImg.src = 'image/table.png';
+		//抽奖的箭头
+		var arrowImg = new Image();
+		arrowImg.src = 'image/arrow.png';
+		//奖品1
+		var awardImg1 = new Image();
+		awardImg1.src = 'image/awardDialog1.png';
+		//奖品2
+		var awardImg2 = new Image();
+		awardImg2.src = 'image/awardDialog2.png';
+		//奖品3
+		var awardImg3 = new Image();
+		awardImg3.src = 'image/awardDialog3.png';
+		//奖品4
+		var awardImg4 = new Image();
+		awardImg4.src = 'image/awardDialog4.png';
+		//奖品5
+		var awardImg5 = new Image();
+		awardImg5.src = 'image/awardDialog5.png';
+		//谢谢惠顾
+		var awardImg0 = new Image();
+		awardImg0.src = 'image/awardDialog0.png';
+
+		//定时器
+		var canvasTime = 0;
+		var levelTime = 0;
+
+		function moveImg (t) {
+			ctx.restore();
+			ctx.save();
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+			ctx.drawImage(titleImg, 5*t-60, 50, 300, 118);
+			ctx.drawImage(domImg1, 50, 10*t, 303, 300);
+			if (t == 20) {
+				ctx.drawImage(startBtn, canvas.width/2-56, canvas.height - 130, 112, 40);
+				ctx.drawImage(awardBtnImg, canvas.width/2-56, canvas.height - 80, 112, 40);
+			}
+		};
+
+		function rotate (t) {
+			ctx.restore();
+			ctx.save();
+			if(t >= 20) {
+				moveImg(t);
+			}
+			ctx.translate(335,30)
+			ctx.rotate((60-t)*Math.PI/90);
+			ctx.drawImage(musicIcon, -15, -15, 30, 30);
+			t--;
+			canvasTime = setTimeout(function () {
+				rotate(t);
+			}, 20);
+		};
+	</script>-->
+</body>
+</html>

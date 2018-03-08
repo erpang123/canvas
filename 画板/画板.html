@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+<body>
+<div class="canvas-cube">
+  <canvas id="ctx" style="border:1px solid #e6e6e6;border-radius: 6px;"></canvas>
+  <div class="setStroke">
+    <div class="strokelist">
+      <label>画笔颜色:</label>
+      <div class="bg-list mb-10" id="bg-list">
+        <a onclick='selectColor(this)' class="bg1 selectColor" data-color="#f44336"></a>
+        <a onclick='selectColor(this)' class="bg2" data-color="#e91e63"></a>
+        <a onclick='selectColor(this)' class="bg3" data-color="#9c27b0"></a>
+        <a onclick='selectColor(this)' class="bg4" data-color="#673ab7"></a>
+        <a onclick='selectColor(this)' class="bg5" data-color="#3f51b5"></a>
+        <a onclick='selectColor(this)' class="bg6" data-color="#2196f3"></a>
+        <a onclick='selectColor(this)' class="bg7" data-color="#009688"></a>
+        <a onclick='selectColor(this)' class="bg8" data-color="#4caf50"></a>
+        <a onclick='selectColor(this)' class="bg9" data-color="#8bc34a"></a>
+        <a onclick='selectColor(this)' class="bg10" data-color="#ffeb3b"></a>
+        <a onclick='selectColor(this)' class="bg11" data-color="#ffc107"></a>
+        <a onclick='selectColor(this)' class="bg12" data-color="#ff5722"></a>
+      </div>
+    </div>
+    <div class="strokelist mb-10">
+      <label>画布粗细:</label>
+      <div class="mb-10 p-r">
+        <div class="range-line"><i id='range-cricle'></i></div>
+        <input class="range-input" oninput="getRange(this)" type="range" value='1' max='10' min='1'/>
+        <label id='RangeText'>1</label>
+      </div>
+    </div>
+    <a class="btn mr-20" onclick="saveImg(event)">保存为图片</a>
+    <a class="btn" onclick="resetCanvas()">重绘</a>
+    <div class="strokelist mt-10">
+      <label>预览:</label>
+      <div class="flex-1" style="height: 200px;width: 200px;">
+        <img id="canvas-show" src="" style="display: none;">
+      </div>
+    </div>
+    <div class="strokelist mt-10">
+      <label>下载图片:</label>
+      <div class="flex-1">
+        <input class="img-name" type="text" placeholder="请输入图片名称" oninput="changeName(this)" />
+        <a class="downbtn" id='downbtn' onclick="downImg(event)">下载图片</a>
+        <a class="downbtn" id='downPdf' onclick="downPdf(event)">下载pdf</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="js/jspdf.debug.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

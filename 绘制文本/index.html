@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style type="text/css">
+		.title{
+			font-size: 14px;
+			color: #333;
+		}
+		.img-list{
+			overflow: hidden;
+		}
+		.img-list p{
+			float: left;
+			margin-right: 10px;
+			border: 1px solid #e6e6e6;
+		}
+		.img-list p.check{
+			border: 1px solid #f00;
+		}
+		.img-list p:last-child{
+			margin-right: 0;
+		}
+		.img-list img{
+			width: 157px;
+			height: 157px;
+			cursor: pointer;
+		}
+		#canvas{
+			border: 1px solid #e6e6e6;
+		}
+		.btn{
+			height: 44px;
+			line-height: 44px;
+			width: 100px;
+			text-align: center;
+			font-size: 16px;
+			background: #8f90fc;
+			color: #fff;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+		.img{
+		  width: 500px;
+		  height:400px;
+		  margin-left: 30px;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<p class="title">选择图片</p>
+		<div class="img-list">
+			<p>
+				<img onclick='drawImg(this)' src="image/1.png">
+			</p>
+			<p>
+				<img onclick='drawImg(this)' src="image/2.png">
+			</p>
+			<p>
+				<img onclick='drawImg(this)' src="image/3.png">
+			</p>
+			<p>
+				<img onclick='drawImg(this)' src="image/4.png">
+			</p>
+		</div>
+	</div>
+	<div>
+		<div style="display: inline-block;">
+			<canvas id='canvas'></canvas>
+			<div class="btn" onclick="submitcanvas()">提交</div>
+		</div>
+		<div style="display: inline-block;vertical-align: top;">
+			<p>
+				<img id='allImg' src="image/all.png">
+			</p>
+		</div>
+	</div>
+	<canvas id='allCanvas'></canvas>
+	<img id='ddImg' class='img' src='image/grad.jpg'/>
+  <div class="">
+    <input onblur="setCanvas(this)" type="text" name=""/><br/>
+    <canvas style="border:1px solid #e6e6e6;margin: 10px 0 30px;" id='canText'></canvas>
+  </div>
+	<script type="text/javascript">
+    //绘制点线文本
+    var canText = document.getElementById('canText');
+    canText.width = 320;
+    canText.height = 320;
+    var ctxText = canText.getContext('2d');
+
+    //绘制线中的过度点
+    var Tween = {
+      Linear: function(t, b, c, d) { return c*t/d + b; }
+    };
+
+    function setCanvas (_this) {
+      var text = _this.value;
+      ctxText.fillStyle = '#fff';
+      ctxText.font="bold 280px arial";
+      ctxText.clearRect(0,0,canText.width,canText.height);
+      ctxText.fillText(text, canText.width/2 - 70, canText.height/2+80);
+      var textData = ctxText.getImageData(0,0,canText.width,canText.height).data;
+      // 间隙大小为13
+      var gap = 13;
+      var pos = [];
+      var x = 0, y = 0, index = 0;
+      //获得可见的点坐标
+      for (var i = 0; i < textData.length; i += (4*gap)) {
+        if (textData[i+3] == 255) {
+          // 塞入此时的坐标
+          pos.push({
+              x: x,
+              y: y
+          });
+        }
+        index = Math.floor(i / 4);
+        x = index % canText.width;
+        y = Math.floor(index / canText.width);
+        if (x >= canText.width - gap) {
+          i += gap * 4 * canText.width;
+        }
+      }
+      /*var maxDistance = 31, minDistance = 0, lines = [], end = 120;//lines：线的数组，maxDistance：线的最大长度。end动画的执行次数
+      //计算每个点之间的线，选取符合规则的线存储到数组中。
+      for (var j = 0; j < pos.length; j++) {
+      	for (var k = j + 1; k < pos.length; k++) {
+      		var lineW = Math.sqrt(Math.pow(pos[j].x - pos[k].x,2) + Math.pow(pos[j].y - pos[k].y,2));
+	      	if (lineW < maxDistance) {
+	      		lines.push({
+	      			pos: [{
+    						x: pos[j].x,
+    						y: pos[j].y
+    					}, {
+    						x: pos[k].x,
+    						y: pos[k].y
+    					}],
+    					move: 0
+    	      })
+      		}
+      	}
+      }
+    	ctxText.lineWidth = 0.5;
+      ctxText.strokeStyle = 'rgba(59, 166, 241, 0.5)';
+      var anim = true;
+      //绘制线条
+      function draw () {
+        for (var m = 0; m < lines.length; m++) {
+          var line = lines[m];
+
+          ctxText.beginPath();
+          ctxText.moveTo(line.pos[0].x, line.pos[0].y);
+          var distanceX = line.pos[1].x - line.pos[0].x;
+          var distanceY = line.pos[1].y - line.pos[0].y;
+          line.move += 3;
+          if (line.move >= end) {
+            ctxText.lineTo(line.pos[1].x, line.pos[1].y);
+            ctxText.stroke();
+            anim = false;
+          } else {
+            var x = Tween.Linear(line.move, line.pos[0].x, distanceX, end);
+            var y = Tween.Linear(line.move, line.pos[0].y, distanceY, end);
+            ctxText.lineTo(x, y);
+            ctxText.stroke();
+          }
+        }
+      }*/
+      function draw () {
+        var r = 5.5;
+        ctxText.fillStyle = 'rgba(59, 166, 241, 0.5)';
+        for (var j = 0; j < pos.length; j++) {
+          ctxText.beginPath();
+          ctxText.arc(pos[j].x, pos[j].y, r, 0, 2 * Math.PI);
+          ctxText.closePath();
+          ctxText.fill();
+        }
+      };
+      function render () {
+        ctxText.clearRect(0,0,canText.width,canText.height);
+        draw()
+        // if (anim) {
+        //   requestAnimationFrame(render);
+        // }
+      }
+      render()
+    }
+
+
+
+    //合并多个图片
+		var canvas = document.getElementById('canvas');
+		var ctx = canvas.getContext('2d');
+		canvas.width = 400;
+		canvas.height = 300;
+		//第几次选中的图片
+		var firstText = 0;
+		var imgs = document.querySelector('.img-list').getElementsByTagName('img');
+		function drawImg (_this) {
+			var img = _this;
+			var classList = img.parentNode.classList;
+			if (classList.contains('check')) {
+				img.parentNode.classList.remove('check');
+				img.removeAttribute('data-value');
+				ctx.clearRect(0, 0, 400, 300);
+				reloadImg()
+			} else {
+				img.setAttribute('data-value', firstText);
+				img.parentNode.classList.add('check');
+				ctx.drawImage(img, 10, 10, 152, 152);
+				firstText++;
+			}
+		}
+		function reloadImg () {
+			var valArray = [];
+			var indArray = [];
+			for (var i = 0; i < imgs.length; i++) {
+				if (imgs[i].getAttribute('data-value')) {
+					valArray[i] = imgs[i].getAttribute('data-value');
+					indArray[i] = imgs[i].getAttribute('data-value');
+				}
+			}
+			valArray.sort(function(a,b){return a > b});
+			for (var j = 0; j < valArray.length; j++) {
+				if (valArray[j]) {
+					for (var k = 0; k < indArray.length; k++) {
+						if (valArray[j] == indArray[k]) {
+							ctx.drawImage(imgs[k], 10, 10, 152, 152);
+							break;
+						}
+					}
+				}
+			}
+		}
+		function submitcanvas(){
+      //绘制的像素点
+      var imgData = ctx.getImageData(10,10,152, 152);
+      console.log(imgData)
+      var newImg = getHistogram(imgData);
+      //原图像素点
+      var allImg = document.getElementById('allImg');
+      var oldCanvas  = document.createElement('canvas');
+      oldCanvas.width = canvas.width;
+      oldCanvas.height = canvas.height;
+      document.body.append(oldCanvas);
+      var oldCtx = oldCanvas.getContext('2d');
+      oldCtx.drawImage(allImg, 10,10,152, 152);
+      var imgData1 = oldCtx.getImageData(10,10,152, 152);
+      console.log(imgData1)
+      var oldImg = getHistogram(imgData1);
+      console.log(cosine(oldImg,newImg));
+      document.body.removeChild(oldCanvas);
+		}
+
+    //图片的灰度化
+	function draw() {
+      var ddImg = document.getElementById('ddImg');
+	    if (ddImg.getAttribute('id')!='frame'){
+	      var canvas = document.createElement('CANVAS');
+	      canvas.setAttribute('width',500);
+	      canvas.setAttribute('height',400);
+	      ddImg.parentNode.insertBefore(canvas,ddImg);
+	      var ctx2d = canvas.getContext('2d');
+        ddImg.onload=function(){
+          ctx2d.drawImage(ddImg,0,0,500,400);
+          var imgdata = ctx2d.getImageData(0,0,500,400);
+          for (var i = 0; i < imgdata.data.length; i += 4) {  
+            var gray = parseInt((imgdata.data[i] + imgdata.data[i + 1] + imgdata.data[i + 2]) / 3);  
+            imgdata.data[i + 2] = imgdata.data[i + 1] = imgdata.data[i] = gray;
+          }
+          ctx2d.putImageData(imgdata, 0, 0)
+        }
+	    }
+		}
+    //灰度化计算
+    function grad (imageData) {
+      for (var i = 0; i < imageData.data.length; i += 4) {  
+        var gray = parseInt((imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3);  
+        imageData.data[i + 2] = imageData.data[i + 1] = imageData.data[i] = gray;
+      }
+      return imageData;
+    }
+    //计算相似度
+    function getHistogram(imageData) {
+      var arr = [];
+      for (var i = 0; i < 64; i++) {
+          arr[i] = 0;
+      }
+      var data = imageData.data;
+      var pow4 = Math.pow(4, 2);
+      for (var i = 0, len = data.length; i < len; i += 4) {
+        var red = (data[i] / 64) | 0;
+        var green = (data[i + 1] / 64) | 0;
+        var blue = (data[i + 2] / 64) | 0;
+        var index = red * pow4 + green * 4 + blue;
+        arr[index]++;
+      }
+      return arr;
+    }
+    function cosine(arr1, arr2) {  
+      var axb = 0,  
+        a = 0,  
+        b = 0;  
+      for (var i = 0, len = arr1.length; i < len; i++) {  
+        axb += arr1[i] * arr2[i];  
+        a += arr1[i] * arr1[i];  
+        b += arr2[i] * arr2[i];  
+      }  
+      return axb / (Math.sqrt(a) * Math.sqrt(b));  
+    }
+		draw()
+
+	</script>
+</body>
+</html>
